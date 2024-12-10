@@ -1,28 +1,20 @@
+use regex::Regex;
+
 pub fn part1(input: &str) -> Result<i32, &'static str> {
     let mut res = 0;
-    for line in input.lines() {
-        let re = regex::Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)").unwrap();
-        for cap in re.captures_iter(line) {
-            let a = cap[1].parse::<i32>().unwrap();
-            let b = cap[2].parse::<i32>().unwrap();
-            res += a * b;
-        }
-    }
-    Ok(res)
-}
-
-pub fn part2(input: &str) -> Result<i32, &'static str> {
-    let mut res = 0;
-    let re = regex::Regex::new(r"(?s:don't\(\).*?(do\(\)|$))").unwrap();
-    let parsed = re.replace_all(input, "");
-
-    let re = regex::Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)").unwrap();
-    for cap in re.captures_iter(&parsed) {
+    let re = Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)").unwrap();
+    for cap in re.captures_iter(input) {
         let a = cap[1].parse::<i32>().unwrap();
         let b = cap[2].parse::<i32>().unwrap();
         res += a * b;
     }
     Ok(res)
+}
+
+pub fn part2(input: &str) -> Result<i32, &'static str> {
+    let re = Regex::new(r"(?s:don't\(\).*?(do\(\)|$))").unwrap();
+    let parsed = re.replace_all(input, "");
+    part1(&parsed)
 }
 
 #[cfg(test)]
