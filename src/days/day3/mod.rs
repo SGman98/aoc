@@ -11,8 +11,18 @@ pub fn part1(input: &str) -> Result<i32, &'static str> {
     Ok(res)
 }
 
-pub fn part2(_input: &str) -> Result<i32, &'static str> {
-    unimplemented!()
+pub fn part2(input: &str) -> Result<i32, &'static str> {
+    let mut res = 0;
+    let re = regex::Regex::new(r"(?s:don't\(\).*?(do\(\)|$))").unwrap();
+    let parsed = re.replace_all(input, "");
+
+    let re = regex::Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)").unwrap();
+    for cap in re.captures_iter(&parsed) {
+        let a = cap[1].parse::<i32>().unwrap();
+        let b = cap[2].parse::<i32>().unwrap();
+        res += a * b;
+    }
+    Ok(res)
 }
 
 #[cfg(test)]
@@ -28,6 +38,8 @@ mod tests {
 
     #[test]
     fn test_part2() {
-        unimplemented!()
+        let input = r#"xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))"#;
+        let result = part2(input).unwrap();
+        assert_eq!(result, 48);
     }
 }
