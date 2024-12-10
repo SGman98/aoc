@@ -1,0 +1,22 @@
+name: Test implementations for aoc 2024
+on:
+  push:
+    branches:
+      - 2024-rust
+      # We could also add `main` here if this is a long-lived branch
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        toolchain:
+          - stable
+          # We could also add `beta` and `nightly` here
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Rust ${{ matrix.toolchain }}
+        run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
+      - name: Test project
+        run: cargo test --verbose
