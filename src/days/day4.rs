@@ -6,67 +6,31 @@ pub fn part1(input: &str) -> Result<i32, &'static str> {
         .map(|line| line.trim().chars().collect::<Vec<char>>())
         .collect::<Vec<Vec<char>>>();
 
+    let directions = [
+        (-1, 0),  // up
+        (1, 0),   // down
+        (0, -1),  // left
+        (0, 1),   // right
+        (-1, -1), // up-left
+        (-1, 1),  // up-right
+        (1, -1),  // down-left
+        (1, 1),   // down-right
+    ];
+
+    let word = ['X', 'M', 'A', 'S'];
+
     for i in 0..mat.len() {
         for j in 0..mat[i].len() {
-            if mat[i][j] == 'X' {
-                // up
-                if i >= 3 && mat[i - 1][j] == 'M' && mat[i - 2][j] == 'A' && mat[i - 3][j] == 'S' {
-                    count += 1;
-                }
-                // down
-                if i < mat.len() - 3
-                    && mat[i + 1][j] == 'M'
-                    && mat[i + 2][j] == 'A'
-                    && mat[i + 3][j] == 'S'
-                {
-                    count += 1;
-                }
-                // left
-                if j >= 3 && mat[i][j - 1] == 'M' && mat[i][j - 2] == 'A' && mat[i][j - 3] == 'S' {
-                    count += 1;
-                }
-                // right
-                if j < mat[i].len() - 3
-                    && mat[i][j + 1] == 'M'
-                    && mat[i][j + 2] == 'A'
-                    && mat[i][j + 3] == 'S'
-                {
-                    count += 1;
-                }
-                // up-left
-                if i >= 3
-                    && j >= 3
-                    && mat[i - 1][j - 1] == 'M'
-                    && mat[i - 2][j - 2] == 'A'
-                    && mat[i - 3][j - 3] == 'S'
-                {
-                    count += 1;
-                }
-                // up-right
-                if i >= 3
-                    && j < mat[i].len() - 3
-                    && mat[i - 1][j + 1] == 'M'
-                    && mat[i - 2][j + 2] == 'A'
-                    && mat[i - 3][j + 3] == 'S'
-                {
-                    count += 1;
-                }
-                // down-left
-                if i < mat.len() - 3
-                    && j >= 3
-                    && mat[i + 1][j - 1] == 'M'
-                    && mat[i + 2][j - 2] == 'A'
-                    && mat[i + 3][j - 3] == 'S'
-                {
-                    count += 1;
-                }
-                // down-right
-                if i < mat.len() - 3
-                    && j < mat[i].len() - 3
-                    && mat[i + 1][j + 1] == 'M'
-                    && mat[i + 2][j + 2] == 'A'
-                    && mat[i + 3][j + 3] == 'S'
-                {
+            for (di, dj) in &directions {
+                if (0..word.len()).all(|k| {
+                    let ni = i as i32 + di * k as i32;
+                    let nj = j as i32 + dj * k as i32;
+                    ni >= 0
+                        && ni < mat.len() as i32
+                        && nj >= 0
+                        && nj < mat[i].len() as i32
+                        && mat[ni as usize][nj as usize] == word[k]
+                }) {
                     count += 1;
                 }
             }
@@ -86,19 +50,14 @@ pub fn part2(input: &str) -> Result<i32, &'static str> {
 
     for i in 0..mat.len() {
         for j in 0..mat[i].len() {
-            if mat[i][j] == 'A' && i >= 1 && i < mat.len() - 1 && j >= 1 && j < mat.len() - 1 {
-                match (
-                    mat[i - 1][j - 1],
-                    mat[i + 1][j + 1],
-                    mat[i - 1][j + 1],
-                    mat[i + 1][j - 1],
-                ) {
-                    ('M', 'S', 'M', 'S')
-                    | ('M', 'S', 'S', 'M')
-                    | ('S', 'M', 'M', 'S')
-                    | ('S', 'M', 'S', 'M') => count += 1,
-                    _ => (),
-                }
+            if !(mat[i][j] == 'A' && i >= 1 && i < mat.len() - 1 && j >= 1 && j < mat.len() - 1) {
+                continue;
+            }
+            if let (('M', 'S') | ('S', 'M'), ('M', 'S') | ('S', 'M')) = (
+                (mat[i - 1][j - 1], mat[i + 1][j + 1]),
+                (mat[i - 1][j + 1], mat[i + 1][j - 1]),
+            ) {
+                count += 1
             }
         }
     }
