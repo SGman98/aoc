@@ -20,15 +20,12 @@ fn main() {
         .text()
         .expect("Failed to get response");
 
+    #[rustfmt::skip]
     let res = match (day.as_str(), part.as_str()) {
-        ("1", "1") => days::day1::part1(&input),
-        ("1", "2") => days::day1::part2(&input),
-        ("2", "1") => days::day2::part1(&input),
-        ("2", "2") => days::day2::part2(&input),
-        ("3", "1") => days::day3::part1(&input),
-        ("3", "2") => days::day3::part2(&input),
-        ("4", "1") => days::day4::part1(&input),
-        ("4", "2") => days::day4::part2(&input),
+        ("1", "1") => days::day1::part1(&input), ("1", "2") => days::day1::part2(&input),
+        ("2", "1") => days::day2::part1(&input), ("2", "2") => days::day2::part2(&input),
+        ("3", "1") => days::day3::part1(&input), ("3", "2") => days::day3::part2(&input),
+        ("4", "1") => days::day4::part1(&input), ("4", "2") => days::day4::part2(&input),
         _ => unimplemented!(),
     };
 
