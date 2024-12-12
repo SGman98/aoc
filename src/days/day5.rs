@@ -94,20 +94,6 @@ pub fn part2(input: &str) -> Result<i32, &'static str> {
         })
         .collect::<Vec<Vec<i32>>>();
 
-    let mut pages_hash: HashMap<i32, (i32, HashSet<i32>)> = HashMap::new();
-
-    for rule in &rules {
-        let first = pages_hash.entry(rule[0]).or_insert((0, HashSet::new()));
-        first.1.insert(rule[1]);
-        check_next_pages(first.clone(), &mut pages_hash);
-    }
-
-    let pages_order = pages_hash
-        .iter()
-        .map(|item| (*item.0, item.1 .0))
-        .collect::<Vec<(i32, i32)>>();
-
-
     let res = updates
         .iter()
         .filter(|update| {
@@ -124,6 +110,21 @@ pub fn part2(input: &str) -> Result<i32, &'static str> {
         })
         .map(|line| {
             let mut tmp = line.clone();
+            let mut pages_hash: HashMap<i32, (i32, HashSet<i32>)> = HashMap::new();
+            for rule in &rules {
+                if !line.contains(&rule[0]) || !line.contains(&rule[1]) {
+                    continue;
+                }
+                let first = pages_hash.entry(rule[0]).or_insert((0, HashSet::new()));
+                first.1.insert(rule[1]);
+                check_next_pages(first.clone(), &mut pages_hash);
+            }
+
+            let pages_order = pages_hash
+                .iter()
+                .map(|item| (*item.0, item.1 .0))
+                .collect::<Vec<(i32, i32)>>();
+
             tmp.sort_by(|a, b| {
                 let a = pages_order.iter().find(|item| item.0 == *a).unwrap().1;
                 let b = pages_order.iter().find(|item| item.0 == *b).unwrap().1;
