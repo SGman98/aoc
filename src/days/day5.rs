@@ -9,7 +9,10 @@ fn check_next_pages(
         let next_entry = pages_hash
             .entry(page)
             .or_insert((last_index, HashSet::new()));
-        next_entry.0 = next_entry.0.max(last_index + 1);
+        if next_entry.0 > last_index {
+            continue;
+        }
+        next_entry.0 = last_index + 1;
         if next_entry.1.is_empty() {
             continue;
         }
