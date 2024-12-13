@@ -14,6 +14,15 @@ impl Direction {
     fn is_horizontal(&self) -> bool {
         matches!(self, Direction::East | Direction::West)
     }
+
+    fn get_next_turn(&self) -> Direction {
+        match self {
+            Direction::North => Direction::East,
+            Direction::East => Direction::South,
+            Direction::South => Direction::West,
+            Direction::West => Direction::North,
+        }
+    }
 }
 
 fn navigate(mat: &mut Vec<Vec<char>>, pos: (i32, i32), cur_direction: Direction) -> bool {
@@ -36,12 +45,7 @@ fn navigate(mat: &mut Vec<Vec<char>>, pos: (i32, i32), cur_direction: Direction)
     let next_char = mat[next_pos.0 as usize][next_pos.1 as usize];
 
     if next_char == '#' {
-        let new_direction = match cur_direction {
-            Direction::North => Direction::East,
-            Direction::East => Direction::South,
-            Direction::South => Direction::West,
-            Direction::West => Direction::North,
-        };
+        let new_direction = cur_direction.get_next_turn();
         let cur_char = mat[pos.0 as usize][pos.1 as usize];
         if (cur_direction.is_vertical() && cur_char == '|')
             || (cur_direction.is_horizontal() && cur_char == '-')
