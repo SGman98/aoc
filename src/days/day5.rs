@@ -1,25 +1,5 @@
 use std::collections::{HashMap, HashSet};
 
-fn check_next_pages(
-    last_entry: (i32, HashSet<i32>),
-    pages_hash: &mut HashMap<i32, (i32, HashSet<i32>)>,
-) {
-    let last_index = last_entry.0;
-    for page in last_entry.1 {
-        let next_entry = pages_hash
-            .entry(page)
-            .or_insert((last_index, HashSet::new()));
-        if next_entry.0 > last_index {
-            continue;
-        }
-        next_entry.0 = last_index + 1;
-        if next_entry.1.is_empty() {
-            continue;
-        }
-        check_next_pages(next_entry.clone(), pages_hash);
-    }
-}
-
 pub fn part1(input: &str) -> Result<i32, &'static str> {
     let mut input = input.split("\n\n");
 
@@ -136,6 +116,26 @@ pub fn part2(input: &str) -> Result<i32, &'static str> {
         .sum::<i32>();
 
     Ok(res)
+}
+
+fn check_next_pages(
+    last_entry: (i32, HashSet<i32>),
+    pages_hash: &mut HashMap<i32, (i32, HashSet<i32>)>,
+) {
+    let last_index = last_entry.0;
+    for page in last_entry.1 {
+        let next_entry = pages_hash
+            .entry(page)
+            .or_insert((last_index, HashSet::new()));
+        if next_entry.0 > last_index {
+            continue;
+        }
+        next_entry.0 = last_index + 1;
+        if next_entry.1.is_empty() {
+            continue;
+        }
+        check_next_pages(next_entry.clone(), pages_hash);
+    }
 }
 
 #[cfg(test)]

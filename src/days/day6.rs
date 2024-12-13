@@ -1,3 +1,145 @@
+pub fn part1(input: &str) -> Result<i32, &'static str> {
+    let mut mat = input
+        .lines()
+        .map(|line| {
+            line.trim()
+                .chars()
+                .map(Char::from_char)
+                .collect::<Vec<Char>>()
+        })
+        .collect::<Vec<Vec<Char>>>();
+
+    let mut pos: (i32, i32) = (0, 0);
+    for (i, row) in mat.iter().enumerate() {
+        if let Some(j) = row.iter().position(|&x| x == Char::Start) {
+            pos = (i as i32, j as i32);
+            break;
+        }
+    }
+
+    navigate(&mut mat, pos, Direction::North);
+
+    let res = mat
+        .iter()
+        .map(|row| {
+            row.iter()
+                .filter(|&x| *x != Char::Obstacle && *x != Char::Empty)
+                .count()
+        })
+        .sum::<usize>() as i32;
+
+    Ok(res)
+}
+
+pub fn part2(input: &str) -> Result<i32, &'static str> {
+    let mat = input
+        .lines()
+        .map(|line| {
+            line.trim()
+                .chars()
+                .map(Char::from_char)
+                .collect::<Vec<Char>>()
+        })
+        .collect::<Vec<Vec<Char>>>();
+
+    let mut pos: (i32, i32) = (0, 0);
+    for (i, row) in mat.iter().enumerate() {
+        if let Some(j) = row.iter().position(|&x| x == Char::Start) {
+            pos = (i as i32, j as i32);
+            break;
+        }
+    }
+
+    let mut loop_count = 0;
+
+    for i in 0..mat.len() {
+        for j in 0..mat[i].len() {
+            let mut mut_mat = mat.clone();
+            if mut_mat[i][j] == Char::Empty {
+                mut_mat[i][j] = Char::Obstacle;
+                let is_loop = navigate(&mut mut_mat, pos, Direction::North);
+                if is_loop {
+                    loop_count += 1;
+                }
+            }
+        }
+    }
+
+    Ok(loop_count)
+}
+
+fn navigate(mat: &mut Vec<Vec<Char>>, pos: (i32, i32), cur_direction: Direction) -> bool {
+    let next_pos = match cur_direction {
+        Direction::North => (pos.0 - 1, pos.1),
+        Direction::East => (pos.0, pos.1 + 1),
+        Direction::South => (pos.0 + 1, pos.1),
+        Direction::West => (pos.0, pos.1 - 1),
+        _ => panic!("Invalid direction"),
+    };
+
+    let cur_char = mat[pos.0 as usize][pos.1 as usize];
+    mat[pos.0 as usize][pos.1 as usize] = cur_char.mark_visited(cur_direction);
+    if cur_char.is_visited(cur_direction) {
+        return true;
+    }
+
+    if next_pos.0 < 0
+        || next_pos.0 >= mat.len() as i32
+        || next_pos.1 < 0
+        || next_pos.1 >= mat[0].len() as i32
+    {
+        return false;
+    }
+
+    let next_char = mat[next_pos.0 as usize][next_pos.1 as usize];
+
+    if next_char == Char::Obstacle {
+        navigate(mat, pos, cur_direction.get_next_turn())
+    } else {
+        navigate(mat, next_pos, cur_direction)
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_part1() {
+        let input = r#"....#.....
+                       .........#
+                       ..........
+                       ..#.......
+                       .......#..
+                       ..........
+                       .#..^.....
+                       ........#.
+                       #.........
+                       ......#..."#;
+
+        let result = part1(input).unwrap();
+        assert_eq!(result, 41);
+    }
+
+    #[test]
+    fn test_part2() {
+        let input = r#"....#.....
+                       .........#
+                       ..........
+                       ..#.......
+                       .......#..
+                       ..........
+                       .#..^.....
+                       ........#.
+                       #.........
+                       ......#..."#;
+
+        let result = part2(input).unwrap();
+        assert_eq!(result, 6);
+    }
+}
+
 #[derive(Debug, PartialEq, Clone, Copy)]
 enum Direction {
     North,
@@ -87,146 +229,5 @@ impl Char {
             },
             _ => false,
         }
-    }
-}
-
-fn navigate(mat: &mut Vec<Vec<Char>>, pos: (i32, i32), cur_direction: Direction) -> bool {
-    let next_pos = match cur_direction {
-        Direction::North => (pos.0 - 1, pos.1),
-        Direction::East => (pos.0, pos.1 + 1),
-        Direction::South => (pos.0 + 1, pos.1),
-        Direction::West => (pos.0, pos.1 - 1),
-        _ => panic!("Invalid direction"),
-    };
-
-    let cur_char = mat[pos.0 as usize][pos.1 as usize];
-    mat[pos.0 as usize][pos.1 as usize] = cur_char.mark_visited(cur_direction);
-    if cur_char.is_visited(cur_direction) {
-        return true;
-    }
-
-    if next_pos.0 < 0
-        || next_pos.0 >= mat.len() as i32
-        || next_pos.1 < 0
-        || next_pos.1 >= mat[0].len() as i32
-    {
-        return false;
-    }
-
-    let next_char = mat[next_pos.0 as usize][next_pos.1 as usize];
-
-    if next_char == Char::Obstacle {
-        navigate(mat, pos, cur_direction.get_next_turn())
-    } else {
-        navigate(mat, next_pos, cur_direction)
-    }
-}
-
-pub fn part1(input: &str) -> Result<i32, &'static str> {
-    let mut mat = input
-        .lines()
-        .map(|line| {
-            line.trim()
-                .chars()
-                .map(Char::from_char)
-                .collect::<Vec<Char>>()
-        })
-        .collect::<Vec<Vec<Char>>>();
-
-    let mut pos: (i32, i32) = (0, 0);
-    for (i, row) in mat.iter().enumerate() {
-        if let Some(j) = row.iter().position(|&x| x == Char::Start) {
-            pos = (i as i32, j as i32);
-            break;
-        }
-    }
-
-    navigate(&mut mat, pos, Direction::North);
-
-    let res = mat
-        .iter()
-        .map(|row| {
-            row.iter()
-                .filter(|&x| *x != Char::Obstacle && *x != Char::Empty)
-                .count()
-        })
-        .sum::<usize>() as i32;
-
-    Ok(res)
-}
-
-pub fn part2(input: &str) -> Result<i32, &'static str> {
-    let mat = input
-        .lines()
-        .map(|line| {
-            line.trim()
-                .chars()
-                .map(Char::from_char)
-                .collect::<Vec<Char>>()
-        })
-        .collect::<Vec<Vec<Char>>>();
-
-    let mut pos: (i32, i32) = (0, 0);
-    for (i, row) in mat.iter().enumerate() {
-        if let Some(j) = row.iter().position(|&x| x == Char::Start) {
-            pos = (i as i32, j as i32);
-            break;
-        }
-    }
-
-    let mut loop_count = 0;
-
-    for i in 0..mat.len() {
-        for j in 0..mat[i].len() {
-            let mut mut_mat = mat.clone();
-            if mut_mat[i][j] == Char::Empty {
-                mut_mat[i][j] = Char::Obstacle;
-                let is_loop = navigate(&mut mut_mat, pos, Direction::North);
-                if is_loop {
-                    loop_count += 1;
-                }
-            }
-        }
-    }
-
-    Ok(loop_count)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_part1() {
-        let input = r#"....#.....
-                       .........#
-                       ..........
-                       ..#.......
-                       .......#..
-                       ..........
-                       .#..^.....
-                       ........#.
-                       #.........
-                       ......#..."#;
-
-        let result = part1(input).unwrap();
-        assert_eq!(result, 41);
-    }
-
-    #[test]
-    fn test_part2() {
-        let input = r#"....#.....
-                       .........#
-                       ..........
-                       ..#.......
-                       .......#..
-                       ..........
-                       .#..^.....
-                       ........#.
-                       #.........
-                       ......#..."#;
-
-        let result = part2(input).unwrap();
-        assert_eq!(result, 6);
     }
 }

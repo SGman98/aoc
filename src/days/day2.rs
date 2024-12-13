@@ -1,22 +1,3 @@
-#[derive(Debug)]
-enum Direction {
-    None,
-    Asc,
-    Desc,
-}
-
-pub fn check_safe(levels: Vec<i32>) -> Result<(), ()> {
-    levels
-        .windows(2)
-        .map(|w| w[0] - w[1])
-        .try_fold(Direction::None, |acc, x| match (acc, x) {
-            (Direction::Asc | Direction::None, 1..=3) => Ok(Direction::Asc),
-            (Direction::Desc | Direction::None, -3..=-1) => Ok(Direction::Desc),
-            _ => Err(()),
-        })
-        .map(|_| ())
-}
-
 pub fn part1(input: &str) -> Result<i32, &'static str> {
     let mut safe = 0;
     for line in input.lines() {
@@ -52,6 +33,18 @@ pub fn part2(input: &str) -> Result<i32, &'static str> {
     Ok(safe)
 }
 
+pub fn check_safe(levels: Vec<i32>) -> Result<(), ()> {
+    levels
+        .windows(2)
+        .map(|w| w[0] - w[1])
+        .try_fold(Direction::None, |acc, x| match (acc, x) {
+            (Direction::Asc | Direction::None, 1..=3) => Ok(Direction::Asc),
+            (Direction::Desc | Direction::None, -3..=-1) => Ok(Direction::Desc),
+            _ => Err(()),
+        })
+        .map(|_| ())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -79,4 +72,11 @@ mod tests {
         let result = part2(input).unwrap();
         assert_eq!(result, 4);
     }
+}
+
+#[derive(Debug)]
+enum Direction {
+    None,
+    Asc,
+    Desc,
 }
