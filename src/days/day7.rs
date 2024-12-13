@@ -14,39 +14,13 @@ pub fn part1(input: &str) -> Result<isize, &'static str> {
 
             (first, rest)
         })
-        .map(|(res, values)| {
-            let len = values.len();
-            let max_range = (1 << len) - 1;
-            let mut possible = false;
-            'op: for i in 0..max_range {
-                let mut sum = values[0];
-                for (j, value) in values.iter().enumerate().skip(1) {
-                    if (i >> (j - 1)) & 1 == 0 {
-                        sum *= value;
-                    } else {
-                        sum += value;
-                    }
-                }
-
-                if sum == res {
-                    possible = true;
-                    break 'op;
-                }
-            }
-            if possible {
-                res
-            } else {
-                0
-            }
-        })
+        .map(|(res, values)| calculate(res, values, vec!['+', '*']))
         .sum::<isize>();
 
     Ok(res)
 }
 
 pub fn part2(input: &str) -> Result<isize, &'static str> {
-    let operations = ['*', '+', '|'];
-
     let res = input
         .lines()
         .map(|line| {
@@ -62,47 +36,54 @@ pub fn part2(input: &str) -> Result<isize, &'static str> {
 
             (first, rest)
         })
-        .map(|(res, values)| {
-            let combinations = (0..(operations.len().pow(values.len() as u32 - 1)))
-                .map(|i| {
-                    let mut i = i;
-                    (0..values.len() - 1)
-                        .map(|_| {
-                            let op = operations[i % operations.len()];
-                            i /= operations.len();
-                            op
-                        })
-                        .collect::<Vec<char>>()
-                })
-                .collect::<Vec<Vec<char>>>();
-
-            let mut possible = false;
-            for combination in combinations {
-                let mut sum = values[0];
-
-                for (i, op) in combination.iter().enumerate() {
-                    if op == &'+' {
-                        sum += values[i + 1];
-                    } else if op == &'*' {
-                        sum *= values[i + 1];
-                    } else {
-                        sum = format!("{}{}", sum, values[i + 1]).parse::<isize>().unwrap();
-                    }
-                }
-                if sum == res {
-                    possible = true;
-                    break;
-                }
-            }
-            if possible {
-                res
-            } else {
-                0
-            }
-        })
+        .map(|(res, values)| calculate(res, values, vec!['+', '*', '|']))
         .sum::<isize>();
 
     Ok(res)
+}
+
+fn calculate(res: isize, values: Vec<isize>, operations: Vec<char>) -> isize {
+    let combinations = (0..(operations.len().pow(values.len() as u32 - 1)))
+        .map(|i| {
+            let mut i = i;
+            (0..values.len() - 1)
+                .map(|_| {
+                    let op = operations[i % operations.len()];
+                    i /= operations.len();
+                    op
+                })
+                .collect::<Vec<char>>()
+        })
+        .collect::<Vec<Vec<char>>>();
+
+    let mut possible = false;
+
+    for combination in combinations {
+        let mut sum = values[0];
+        for (i, op) in combination.iter().enumerate() {
+            if op == &'+' {
+                sum += values[i + 1];
+            } else if op == &'*' {
+                sum *= values[i + 1];
+            } else if op == &'|' {
+                sum = format!("{}{}", sum, values[i + 1])
+                    .parse::<isize>()
+                    .unwrap();
+            } else {
+                panic!("Invalid operation");
+            }
+        }
+        if sum == res {
+            possible = true;
+            break;
+        }
+    }
+
+    if possible {
+        res
+    } else {
+        0
+    }
 }
 
 #[cfg(test)]
