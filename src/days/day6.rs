@@ -1,4 +1,4 @@
-pub fn part1(input: &str) -> Result<i32, &'static str> {
+pub fn part1(input: &str) -> Result<isize, &'static str> {
     let mut mat = input
         .lines()
         .map(|line| {
@@ -9,10 +9,10 @@ pub fn part1(input: &str) -> Result<i32, &'static str> {
         })
         .collect::<Vec<Vec<Char>>>();
 
-    let mut pos: (i32, i32) = (0, 0);
+    let mut pos: (isize, isize) = (0, 0);
     for (i, row) in mat.iter().enumerate() {
         if let Some(j) = row.iter().position(|&x| x == Char::Start) {
-            pos = (i as i32, j as i32);
+            pos = (i as isize, j as isize);
             break;
         }
     }
@@ -26,12 +26,12 @@ pub fn part1(input: &str) -> Result<i32, &'static str> {
                 .filter(|&x| *x != Char::Obstacle && *x != Char::Empty)
                 .count()
         })
-        .sum::<usize>() as i32;
+        .sum::<usize>() as isize;
 
     Ok(res)
 }
 
-pub fn part2(input: &str) -> Result<i32, &'static str> {
+pub fn part2(input: &str) -> Result<isize, &'static str> {
     let mat = input
         .lines()
         .map(|line| {
@@ -42,10 +42,10 @@ pub fn part2(input: &str) -> Result<i32, &'static str> {
         })
         .collect::<Vec<Vec<Char>>>();
 
-    let mut pos: (i32, i32) = (0, 0);
+    let mut pos: (isize, isize) = (0, 0);
     for (i, row) in mat.iter().enumerate() {
         if let Some(j) = row.iter().position(|&x| x == Char::Start) {
-            pos = (i as i32, j as i32);
+            pos = (i as isize, j as isize);
             break;
         }
     }
@@ -68,7 +68,7 @@ pub fn part2(input: &str) -> Result<i32, &'static str> {
     Ok(loop_count)
 }
 
-fn navigate(mat: &mut Vec<Vec<Char>>, pos: (i32, i32), cur_direction: Direction) -> bool {
+fn navigate(mat: &mut Vec<Vec<Char>>, pos: (isize, isize), cur_direction: Direction) -> bool {
     let next_pos = match cur_direction {
         Direction::North => (pos.0 - 1, pos.1),
         Direction::East => (pos.0, pos.1 + 1),
@@ -84,9 +84,9 @@ fn navigate(mat: &mut Vec<Vec<Char>>, pos: (i32, i32), cur_direction: Direction)
     }
 
     if next_pos.0 < 0
-        || next_pos.0 >= mat.len() as i32
+        || next_pos.0 >= mat.len() as isize
         || next_pos.1 < 0
-        || next_pos.1 >= mat[0].len() as i32
+        || next_pos.1 >= mat[0].len() as isize
     {
         return false;
     }

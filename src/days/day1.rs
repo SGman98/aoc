@@ -1,10 +1,10 @@
-pub fn part1(input: &str) -> Result<i32, &'static str> {
+pub fn part1(input: &str) -> Result<isize, &'static str> {
     let mut left_list = vec![];
     let mut right_list = vec![];
     for line in input.lines() {
         let mut parts = line.split_whitespace();
-        left_list.push(parts.next().unwrap().parse::<i32>().unwrap());
-        right_list.push(parts.next().unwrap().parse::<i32>().unwrap());
+        left_list.push(parts.next().unwrap().parse::<isize>().unwrap());
+        right_list.push(parts.next().unwrap().parse::<isize>().unwrap());
     }
 
     left_list.sort();
@@ -19,20 +19,20 @@ pub fn part1(input: &str) -> Result<i32, &'static str> {
     Ok(distance)
 }
 
-pub fn part2(input: &str) -> Result<i32, &'static str> {
+pub fn part2(input: &str) -> Result<isize, &'static str> {
     let mut left_list = vec![];
     let mut right_list = vec![];
     for line in input.lines() {
         let mut parts = line.split_whitespace();
-        left_list.push(parts.next().unwrap().parse::<i32>().unwrap());
-        right_list.push(parts.next().unwrap().parse::<i32>().unwrap());
+        left_list.push(parts.next().unwrap().parse::<isize>().unwrap());
+        right_list.push(parts.next().unwrap().parse::<isize>().unwrap());
     }
 
     let similarity = left_list
         .iter()
         .map(|left_item| {
             let right_count = right_list.iter().filter(|x| *x == left_item).count();
-            right_count as i32 * left_item
+            right_count as isize * left_item
         })
         .sum();
 

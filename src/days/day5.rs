@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-pub fn part1(input: &str) -> Result<i32, &'static str> {
+pub fn part1(input: &str) -> Result<isize, &'static str> {
     let mut input = input.split("\n\n");
 
     let rules = input
@@ -10,10 +10,10 @@ pub fn part1(input: &str) -> Result<i32, &'static str> {
         .map(|line| {
             line.trim()
                 .split("|")
-                .map(|x| x.parse::<i32>().unwrap())
-                .collect::<Vec<i32>>()
+                .map(|x| x.parse::<isize>().unwrap())
+                .collect::<Vec<isize>>()
         })
-        .collect::<Vec<Vec<i32>>>();
+        .collect::<Vec<Vec<isize>>>();
 
     let updates = input
         .next()
@@ -22,10 +22,10 @@ pub fn part1(input: &str) -> Result<i32, &'static str> {
         .map(|line| {
             line.trim()
                 .split(",")
-                .map(|x| x.parse::<i32>().unwrap())
-                .collect::<Vec<i32>>()
+                .map(|x| x.parse::<isize>().unwrap())
+                .collect::<Vec<isize>>()
         })
-        .collect::<Vec<Vec<i32>>>();
+        .collect::<Vec<Vec<isize>>>();
 
     let res = updates
         .iter()
@@ -42,12 +42,12 @@ pub fn part1(input: &str) -> Result<i32, &'static str> {
             })
         })
         .map(|update| update[update.len() / 2])
-        .sum::<i32>();
+        .sum::<isize>();
 
     Ok(res)
 }
 
-pub fn part2(input: &str) -> Result<i32, &'static str> {
+pub fn part2(input: &str) -> Result<isize, &'static str> {
     let mut input = input.split("\n\n");
 
     let rules = input
@@ -57,10 +57,10 @@ pub fn part2(input: &str) -> Result<i32, &'static str> {
         .map(|line| {
             line.trim()
                 .split("|")
-                .map(|x| x.parse::<i32>().unwrap())
-                .collect::<Vec<i32>>()
+                .map(|x| x.parse::<isize>().unwrap())
+                .collect::<Vec<isize>>()
         })
-        .collect::<Vec<Vec<i32>>>();
+        .collect::<Vec<Vec<isize>>>();
 
     let updates = input
         .next()
@@ -69,10 +69,10 @@ pub fn part2(input: &str) -> Result<i32, &'static str> {
         .map(|line| {
             line.trim()
                 .split(",")
-                .map(|x| x.parse::<i32>().unwrap())
-                .collect::<Vec<i32>>()
+                .map(|x| x.parse::<isize>().unwrap())
+                .collect::<Vec<isize>>()
         })
-        .collect::<Vec<Vec<i32>>>();
+        .collect::<Vec<Vec<isize>>>();
 
     let res = updates
         .iter()
@@ -90,7 +90,7 @@ pub fn part2(input: &str) -> Result<i32, &'static str> {
         })
         .map(|line| {
             let mut tmp = line.clone();
-            let mut pages_hash: HashMap<i32, (i32, HashSet<i32>)> = HashMap::new();
+            let mut pages_hash: HashMap<isize, (isize, HashSet<isize>)> = HashMap::new();
             for rule in &rules {
                 if !line.contains(&rule[0]) || !line.contains(&rule[1]) {
                     continue;
@@ -103,7 +103,7 @@ pub fn part2(input: &str) -> Result<i32, &'static str> {
             let pages_order = pages_hash
                 .iter()
                 .map(|item| (*item.0, item.1 .0))
-                .collect::<Vec<(i32, i32)>>();
+                .collect::<Vec<(isize, isize)>>();
 
             tmp.sort_by(|a, b| {
                 let a = pages_order.iter().find(|item| item.0 == *a).unwrap().1;
@@ -113,14 +113,14 @@ pub fn part2(input: &str) -> Result<i32, &'static str> {
             tmp
         })
         .map(|update| update[update.len() / 2])
-        .sum::<i32>();
+        .sum::<isize>();
 
     Ok(res)
 }
 
 fn check_next_pages(
-    last_entry: (i32, HashSet<i32>),
-    pages_hash: &mut HashMap<i32, (i32, HashSet<i32>)>,
+    last_entry: (isize, HashSet<isize>),
+    pages_hash: &mut HashMap<isize, (isize, HashSet<isize>)>,
 ) {
     let last_index = last_entry.0;
     for page in last_entry.1 {

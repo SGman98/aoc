@@ -1,16 +1,16 @@
-pub fn part1(input: &str) -> Result<i32, &'static str> {
+pub fn part1(input: &str) -> Result<isize, &'static str> {
     let res = input
         .lines()
         .map(|line| {
             let mut parts = line.trim().split(": ");
 
-            let first = parts.next().unwrap().parse::<i32>().unwrap();
+            let first = parts.next().unwrap().parse::<isize>().unwrap();
             let rest = parts
                 .next()
                 .unwrap()
                 .split_whitespace()
-                .map(|x| x.parse::<i32>().unwrap())
-                .collect::<Vec<i32>>();
+                .map(|x| x.parse::<isize>().unwrap())
+                .collect::<Vec<isize>>();
 
             (first, rest)
         })
@@ -39,12 +39,12 @@ pub fn part1(input: &str) -> Result<i32, &'static str> {
                 0
             }
         })
-        .sum::<i32>();
+        .sum::<isize>();
 
     Ok(res)
 }
 
-pub fn part2(_input: &str) -> Result<i32, &'static str> {
+pub fn part2(_input: &str) -> Result<isize, &'static str> {
     unimplemented!()
 }
 

@@ -1,4 +1,4 @@
-pub fn part1(input: &str) -> Result<i32, &'static str> {
+pub fn part1(input: &str) -> Result<isize, &'static str> {
     let mut count = 0;
 
     let mat = input
@@ -23,12 +23,12 @@ pub fn part1(input: &str) -> Result<i32, &'static str> {
         for j in 0..mat[i].len() {
             for (di, dj) in &directions {
                 if (0..word.len()).all(|k| {
-                    let ni = i as i32 + di * k as i32;
-                    let nj = j as i32 + dj * k as i32;
+                    let ni = i as isize + di * k as isize;
+                    let nj = j as isize + dj * k as isize;
                     ni >= 0
-                        && ni < mat.len() as i32
+                        && ni < mat.len() as isize
                         && nj >= 0
-                        && nj < mat[i].len() as i32
+                        && nj < mat[i].len() as isize
                         && mat[ni as usize][nj as usize] == word[k]
                 }) {
                     count += 1;
@@ -40,7 +40,7 @@ pub fn part1(input: &str) -> Result<i32, &'static str> {
     Ok(count)
 }
 
-pub fn part2(input: &str) -> Result<i32, &'static str> {
+pub fn part2(input: &str) -> Result<isize, &'static str> {
     let mut count = 0;
 
     let mat = input

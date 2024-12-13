@@ -1,10 +1,10 @@
-pub fn part1(input: &str) -> Result<i32, &'static str> {
+pub fn part1(input: &str) -> Result<isize, &'static str> {
     let mut safe = 0;
     for line in input.lines() {
         let levels = line
             .split_whitespace()
-            .map(|l| l.parse::<i32>().unwrap())
-            .collect::<Vec<i32>>();
+            .map(|l| l.parse::<isize>().unwrap())
+            .collect::<Vec<isize>>();
         let res = check_safe(levels);
         if res.is_ok() {
             safe += 1;
@@ -13,12 +13,12 @@ pub fn part1(input: &str) -> Result<i32, &'static str> {
     Ok(safe)
 }
 
-pub fn part2(input: &str) -> Result<i32, &'static str> {
+pub fn part2(input: &str) -> Result<isize, &'static str> {
     let mut safe = 0;
     for line in input.lines() {
-        let levels: Vec<i32> = line
+        let levels: Vec<isize> = line
             .split_whitespace()
-            .map(|l| l.parse::<i32>().unwrap())
+            .map(|l| l.parse::<isize>().unwrap())
             .collect();
         for i in 0..levels.len() {
             let mut levels_cloned = levels.clone();
@@ -33,7 +33,7 @@ pub fn part2(input: &str) -> Result<i32, &'static str> {
     Ok(safe)
 }
 
-pub fn check_safe(levels: Vec<i32>) -> Result<(), ()> {
+pub fn check_safe(levels: Vec<isize>) -> Result<(), ()> {
     levels
         .windows(2)
         .map(|w| w[0] - w[1])
