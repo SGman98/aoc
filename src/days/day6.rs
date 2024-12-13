@@ -14,14 +14,14 @@ impl Direction {
     fn is_vertical(&self) -> bool {
         matches!(
             self,
-            Direction::North | Direction::South | Direction::Vertical | Direction::Both
+            Direction::North | Direction::South | Direction::Vertical
         )
     }
 
     fn is_horizontal(&self) -> bool {
         matches!(
             self,
-            Direction::East | Direction::West | Direction::Horizontal | Direction::Both
+            Direction::East | Direction::West | Direction::Horizontal
         )
     }
 
@@ -76,11 +76,15 @@ impl Char {
 
     fn is_visited(&self, direction: Direction) -> bool {
         match self {
-            Char::Visited(d) => {
-                direction == *d
-                    || (direction.is_vertical() && d.is_vertical())
-                    || (direction.is_horizontal() && d.is_horizontal())
-            }
+            Char::Visited(d) => match direction {
+                Direction::North => *d == Direction::North,
+                Direction::South => *d == Direction::South,
+                Direction::East => *d == Direction::East,
+                Direction::West => *d == Direction::West,
+                Direction::Vertical => d.is_vertical(),
+                Direction::Horizontal => d.is_horizontal(),
+                Direction::Both => true,
+            },
             _ => false,
         }
     }
@@ -95,34 +99,25 @@ fn navigate(mat: &mut Vec<Vec<Char>>, pos: (i32, i32), cur_direction: Direction)
         _ => panic!("Invalid direction"),
     };
 
+    let cur_char = mat[pos.0 as usize][pos.1 as usize];
+    mat[pos.0 as usize][pos.1 as usize] = cur_char.mark_visited(cur_direction);
+    if cur_char.is_visited(cur_direction) {
+        return true;
+    }
+
     if next_pos.0 < 0
         || next_pos.0 >= mat.len() as i32
         || next_pos.1 < 0
         || next_pos.1 >= mat[0].len() as i32
     {
-        mat[pos.0 as usize][pos.1 as usize] = Char::Visited(cur_direction);
         return false;
     }
 
     let next_char = mat[next_pos.0 as usize][next_pos.1 as usize];
 
     if next_char == Char::Obstacle {
-        let new_direction = cur_direction.get_next_turn();
-        let cur_char = mat[pos.0 as usize][pos.1 as usize];
-        if cur_char.is_visited(cur_direction) {
-            return true;
-        }
-        mat[pos.0 as usize][pos.1 as usize] = cur_char.mark_visited(cur_direction);
-        navigate(mat, pos, new_direction)
+        navigate(mat, pos, cur_direction.get_next_turn())
     } else {
-        let cur_char = mat[pos.0 as usize][pos.1 as usize];
-        match cur_char {
-            Char::Visited(_) => (),
-            _ => {
-                mat[pos.0 as usize][pos.1 as usize] = cur_char.mark_visited(cur_direction);
-            }
-        }
-
         navigate(mat, next_pos, cur_direction)
     }
 }
