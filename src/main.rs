@@ -27,6 +27,7 @@ fn main() {
         ("3", "1") => days::day3::part1(&input), ("3", "2") => days::day3::part2(&input),
         ("4", "1") => days::day4::part1(&input), ("4", "2") => days::day4::part2(&input),
         ("5", "1") => days::day5::part1(&input), ("5", "2") => days::day5::part2(&input),
+        ("6", "1") => days::day6::part1(&input), ("6", "2") => days::day6::part2(&input),
         _ => unimplemented!(),
     };
 
