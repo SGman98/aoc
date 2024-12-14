@@ -92,7 +92,7 @@ pub fn part2(input: &str) -> Result<isize, &'static str> {
 
     let antinode_locations = locations
         .iter()
-        .flat_map(|(cur_char, locations)| {
+        .flat_map(|(_, locations)| {
             repeat_n(locations.iter(), 2)
                 .multi_cartesian_product()
                 .flat_map(|pair| {
@@ -107,7 +107,7 @@ pub fn part2(input: &str) -> Result<isize, &'static str> {
                     let mut reflections = vec![];
 
                     loop {
-                        a = (a.0 + di, a.1 + dj);
+                        a = (a.0 - di, a.1 - dj);
                         if !(a.0 >= 0
                             && a.0 < mat.len() as isize
                             && a.1 >= 0
@@ -119,7 +119,7 @@ pub fn part2(input: &str) -> Result<isize, &'static str> {
                     }
 
                     loop {
-                        b = (b.0 - di, b.1 - dj);
+                        b = (b.0 + di, b.1 + dj);
                         if !(b.0 >= 0
                             && b.0 < mat.len() as isize
                             && b.1 >= 0
@@ -133,23 +133,11 @@ pub fn part2(input: &str) -> Result<isize, &'static str> {
                     reflections
                 })
                 .filter(|&(i, j)| {
-                    i >= 0
-                        && i < mat.len() as isize
-                        && j >= 0
-                        && j < mat[0].len() as isize
-                        && mat[i as usize][j as usize] != *cur_char
+                    i >= 0 && i < mat.len() as isize && j >= 0 && j < mat[0].len() as isize
                 })
                 .collect::<Vec<(isize, isize)>>()
         })
-        .merge(
-            locations
-                .clone()
-                .into_iter()
-                .flat_map(|(_, locations)| locations.into_iter())
-                .collect::<Vec<(isize, isize)>>(),
-        )
         .collect::<HashSet<(isize, isize)>>();
-
 
     Ok(antinode_locations.len() as isize)
 }
