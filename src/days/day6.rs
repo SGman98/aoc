@@ -100,7 +100,6 @@ fn navigate(mat: &mut Vec<Vec<Char>>, pos: (isize, isize), cur_direction: Direct
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
