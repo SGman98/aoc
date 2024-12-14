@@ -1,3 +1,5 @@
+use itertools::{repeat_n, Itertools};
+
 pub fn part1(input: &str) -> Result<isize, &'static str> {
     let res = input
         .lines()
@@ -43,47 +45,29 @@ pub fn part2(input: &str) -> Result<isize, &'static str> {
 }
 
 fn calculate(res: isize, values: Vec<isize>, operations: Vec<char>) -> isize {
-    let combinations = (0..(operations.len().pow(values.len() as u32 - 1)))
-        .map(|i| {
-            let mut i = i;
-            (0..values.len() - 1)
-                .map(|_| {
-                    let op = operations[i % operations.len()];
-                    i /= operations.len();
-                    op
+    repeat_n(operations.into_iter(), values.len() - 1)
+        .multi_cartesian_product()
+        .find(|combination| {
+            combination
+                .iter()
+                .enumerate()
+                .fold(values[0], |mut acc, (i, op)| {
+                    match op {
+                        '+' => acc += values[i + 1],
+                        '*' => acc *= values[i + 1],
+                        '|' => {
+                            acc = format!("{}{}", acc, values[i + 1])
+                                .parse::<isize>()
+                                .unwrap()
+                        }
+                        _ => panic!("Invalid operation"),
+                    }
+                    acc
                 })
-                .collect::<Vec<char>>()
+                .eq(&res)
         })
-        .collect::<Vec<Vec<char>>>();
-
-    let mut possible = false;
-
-    for combination in combinations {
-        let mut sum = values[0];
-        for (i, op) in combination.iter().enumerate() {
-            if op == &'+' {
-                sum += values[i + 1];
-            } else if op == &'*' {
-                sum *= values[i + 1];
-            } else if op == &'|' {
-                sum = format!("{}{}", sum, values[i + 1])
-                    .parse::<isize>()
-                    .unwrap();
-            } else {
-                panic!("Invalid operation");
-            }
-        }
-        if sum == res {
-            possible = true;
-            break;
-        }
-    }
-
-    if possible {
-        res
-    } else {
-        0
-    }
+        .map(|_| res)
+        .unwrap_or(0)
 }
 
 #[cfg(test)]
